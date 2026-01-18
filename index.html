@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de uchumaca</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f7f6 url('https://www.dzoom.org.es/wp-content/uploads/2017/07/seebensee-2384369-810x540.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+        }
+        h2 { color: #2c3e50; margin-bottom: 20px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
+        input {
+            padding: 12px;
+            width: 93%;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background: #27ae60;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        button:hover { background: #219150; }
+        .detalle {
+            margin-top: 20px;
+            text-align: left;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .total-box {
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-top: 15px;
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Recibo de Luz Trujillo</h2>
+        <div class="input-group">
+            <label for="consumo">Consumo del mes (kWh):</label>
+            <input type="number" id="consumo" placeholder="Ej: 4.00" step="0.01">
+        </div>
+        <button onclick="calcularCosto()">Calcular Factura</button>
+
+        <div id="detalleFactura" class="detalle" style="display:none;">
+            <div>Energía Activa: <span id="resEnergia"></span></div>
+            <div>Cargos Fijos y Mant.: <span id="resFijos"></span></div>
+            <div>Alumbrado Público: <span id="resAlumbrado"></span></div>
+            <div>IGV (18%): <span id="resIgv"></span></div>
+            <div>Aporte Ley 28749: <span id="resLey"></span></div>
+            <div class="total-box">Total a Pagar: S/ <span id="resTotal"></span></div>
+        </div>
+    </div>
+
+    <script>
+        function calcularCosto() {
+            // Valores constantes según el recibo
+            const cargoFijo = 3.24;
+            const mantenimiento = 1.94;
+            const precioKwh = 0.2685;
+            const alumbrado = 0.54;
+            const factorLey = 0.0107;
+
+            let consumo = parseFloat(document.getElementById("consumo").value);
+
+            if (isNaN(consumo) || consumo < 0) {
+                alert("Por favor, ingresa un consumo válido.");
+                return;
+            }
+
+            // Cálculos
+            let costoEnergia = consumo * precioKwh;
+            let subtotalAfecto = costoEnergia + cargoFijo + mantenimiento + alumbrado;
+            let igv = subtotalAfecto * 0.18;
+            let aporteLey = consumo * factorLey;
+            
+            let totalPreRedondeo = subtotalAfecto + igv + aporteLey;
+            
+            // Redondeo para que sea entero (S/ 8.00, S/ 9.00, etc.)
+            let totalFinal = Math.round(totalPreRedondeo);
+
+            // Mostrar resultados
+            document.getElementById("resEnergia").innerText = "S/ " + costoEnergia.toFixed(2);
+            document.getElementById("resFijos").innerText = "S/ " + (cargoFijo + mantenimiento).toFixed(2);
+            document.getElementById("resAlumbrado").innerText = "S/ " + alumbrado.toFixed(2);
+            document.getElementById("resIgv").innerText = "S/ " + igv.toFixed(2);
+            document.getElementById("resLey").innerText = "S/ " + aporteLey.toFixed(2);
+            document.getElementById("resTotal").innerText = totalFinal.toFixed(2);
+            
+            document.getElementById("detalleFactura").style.display = "block";
+        }
+    </script>
+</body>
+</html>
